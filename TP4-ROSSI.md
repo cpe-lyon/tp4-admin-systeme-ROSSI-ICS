@@ -150,10 +150,18 @@ Removing user u3 from group groupe2
 Ne fonctionne pas car que groupe2 est l'unique groupe de u3
 
 **Modifiez le compte de u4 de sorte que :**
+
 — il expire au 1er juin 2019
 
 — il faut changer de mot de passe avant 90 jours
+
 — il faut attendre 5 jours pour modifier un mot de passe
+
 — l’utilisateur est averti 14 jours avant l’expiration de son mot de passe
+
 — le compte sera bloqué 30 jours après expiration du mot de passe
 
+
+```
+sudo chage -d 06/01/20 u4
+```
