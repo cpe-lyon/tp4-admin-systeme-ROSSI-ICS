@@ -163,5 +163,5 @@ Ne fonctionne pas car que groupe2 est l'unique groupe de u3
 
 
 ```
-sudo chage -d 06/01/20 u4
+sudo chage -d 06/01/20 -M 90 -m 5 -W 14 --expiredate 09/30/20 u4
 ```
