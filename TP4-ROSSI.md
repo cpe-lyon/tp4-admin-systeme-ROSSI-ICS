@@ -354,3 +354,22 @@ Les droits du répertoire courants sont ("récursif") sur les répertoires enfan
 Oui on peut faire cd ..
 
 L'explication est que si on peut pas se placer dans un répertoire, on ne peut pas le traverser et donc aller dans les prochains dossiers
+
+**Rétablissez le droit en exécution du répertoire test. Attribuez au fichier fichier les droits suffisants
+pour qu’une autre personne de votre groupe puisse y accéder en lecture, mais pas en écriture.**
+
+```
+thomas@ubuntu-server:~/test$ ls -l
+total 8
+--wx------ 1 thomas thomas   11 oct.   2 09:26 fichier
+drwxrwxr-x 2 thomas thomas 4096 oct.   2 09:44 sstest
+thomas@ubuntu-server:~/test$ chmod o+r fichier
+thomas@ubuntu-server:~/test$ ls -l
+total 8
+--wx---r-- 1 thomas thomas   11 oct.   2 09:26 fichier
+drwxrwxr-x 2 thomas thomas 4096 oct.   2 09:44 sstest
+```
+
+**Rétablissez le droit en exécution du répertoire test. Attribuez au fichier fichier les droits suffisants
+pour qu’une autre personne de votre groupe puisse y accéder en lecture, mais pas en écriture.**
+
