@@ -165,3 +165,18 @@ Ne fonctionne pas car que groupe2 est l'unique groupe de u3
 ```
 sudo chage -d 06/01/20 -M 90 -m 5 -W 14 --expiredate 09/30/20 u4
 ```
+
+**Quel est l’interpréteur de commandes (Shell) de l’utilisateur root ?**
+
+
+```
+thomas@ubuntu-server:~$ grep root /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+```
+
+Ou bien
+```
+sudo echo $SHELL
+```
+
+C'est /bin/bash
