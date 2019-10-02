@@ -180,3 +180,13 @@ sudo echo $SHELL
 ```
 
 C'est /bin/bash
+
+**à quoi correspond l’utilisateur nobody ?**
+
+```
+thomas@ubuntu-server:~$ grep nobody /etc/passwd
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+```
+
+Nobody est un utilisateur qui n'a aucun droit sous linux, les droits minimun.
+Il a donc que les droits défini dans other des fichiers.
