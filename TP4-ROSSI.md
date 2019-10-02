@@ -370,6 +370,111 @@ total 8
 drwxrwxr-x 2 thomas thomas 4096 oct.   2 09:44 sstest
 ```
 
-**Rétablissez le droit en exécution du répertoire test. Attribuez au fichier fichier les droits suffisants
-pour qu’une autre personne de votre groupe puisse y accéder en lecture, mais pas en écriture.**
+**Définissez un umask très restrictif qui interdit à quiconque à part vous l’accès en lecture ou en écriture,
+ainsi que la traversée de vos répertoires. Testez sur un nouveau fichier et un nouveau répertoire.**
 
+
+```
+thomas@ubuntu-server:~$ umask
+0002
+thomas@ubuntu-server:~$ umask -S
+u=rwx,g=rwx,o=rx
+thomas@ubuntu-server:~$ umask go=
+thomas@ubuntu-server:~$ umask -S
+u=rwx,g=,o=
+thomas@ubuntu-server:~$ umask
+0077
+thomas@ubuntu-server:~$ mkdir umaskDir
+thomas@ubuntu-server:~$ ls -l
+total 16
+drwxrwxr-x 3 thomas thomas 4096 sept. 30 07:25 DEV
+drwxrwxr-x 4 thomas thomas 4096 sept. 23 12:37 script
+drwxrwxr-x 3 thomas thomas 4096 oct.   2 09:51 test
+drwx------ 2 thomas thomas 4096 oct.   2 16:32 umaskDir
+thomas@ubuntu-server:~$ touch umaskDir/test
+thomas@ubuntu-server:~$ ls -l umaskDir/
+total 0
+-rw------- 1 thomas thomas 0 oct.   2 16:32 test
+```
+
+J'ai donc bien changer le umask avec ```umask go=``` pour qu'il y ai que moi qui ai accès et le dossier et fichier ont bien été crée avec les bons droits car les autres n'ont aucune permissions à part moi
+
+**Définissez un umask très permissif qui autorise tout le monde à lire vos fichiers et traverser vos réper-
+toires, mais n’autorise que vous à écrire. Testez sur un nouveau fichier et un nouveau répertoire.**
+
+```
+thomas@ubuntu-server:~$ umask go=rx
+thomas@ubuntu-server:~$ umask -S
+u=rwx,g=rx,o=rx
+thomas@ubuntu-server:~$ mkdir umaskDir2
+thomas@ubuntu-server:~$ touch umaskDir2/test
+thomas@ubuntu-server:~$ ls -l
+total 20
+drwxrwxr-x 3 thomas thomas 4096 sept. 30 07:25 DEV
+drwxrwxr-x 4 thomas thomas 4096 sept. 23 12:37 script
+drwxrwxr-x 3 thomas thomas 4096 oct.   2 09:51 test
+drwx------ 2 thomas thomas 4096 oct.   2 16:32 umaskDir
+drwxr-xr-x 2 thomas thomas 4096 oct.   2 16:38 umaskDir2
+thomas@ubuntu-server:~$ ls -l umaskDir2
+total 0
+-rw-r--r-- 1 thomas thomas 0 oct.   2 16:38 test
+```
+
+J'ai donc autoriser le groupe et les autres à lire à executer mais pas écrire et cela fonctionne bien car les dossier sont lisibles et executable pae tout le monde et les fichiers uniquement lisible (car le masque AND NOT pour un fichier est 666)
+
+**Définissez un umask équilibré qui vous autorise un accès complet et autorise un accès en lecture aux
+membres de votre groupe. Testez sur un nouveau fichier et un nouveau répertoire.**
+
+```
+thomas@ubuntu-server:~$ umask
+0022
+thomas@ubuntu-server:~$ umask -S
+u=rwx,g=rx,o=rx
+thomas@ubuntu-server:~$ umask 0037
+thomas@ubuntu-server:~$ umask -S
+u=rwx,g=r,o=
+thomas@ubuntu-server:~$ mkdir umaskDir3
+thomas@ubuntu-server:~$ ls -l
+total 24
+drwxrwxr-x 3 thomas thomas 4096 sept. 30 07:25 DEV
+drwxrwxr-x 4 thomas thomas 4096 sept. 23 12:37 script
+drwxrwxr-x 3 thomas thomas 4096 oct.   2 09:51 test
+drwx------ 2 thomas thomas 4096 oct.   2 16:32 umaskDir
+drwxr-xr-x 2 thomas thomas 4096 oct.   2 16:38 umaskDir2
+drwxr----- 2 thomas thomas 4096 oct.   2 16:49 umaskDir3
+thomas@ubuntu-server:~$ touch umaskDir3/test
+thomas@ubuntu-server:~$ ls -l umaskDir3/test
+-rw-r----- 1 thomas thomas 0 oct.   2 16:49 umaskDir3/test
+```
+
+J'ai donc tout autoriser pour moi, autoriser juste lecture pour les membres du groupes et rien pour les autres.
+
+**Transcrivez les commandes suivantes de la notation classique à la notation octale ou vice-versa (vous
+pourrez vous aider de la commande stat pour valider vos réponses) :**
+
+
+*- chmod u=rx,g=wx,o=r fic*
+chmod 534 fic*
+
+*- chmod uo+w,g-rx fic en sachant que les droits initiaux de fic sont r--r-x---*
+chmod 602 fic
+
+*- chmod 653 fic en sachant que les droits initiaux de fic sont 711*
+chmod u=rw, g=rx, o=wx fic
+
+*- chmod u+x,g=w,o-r fic en sachant que les droits initiaux de fic sont r--r-x---*
+chmod 520 fic
+
+**Affichez les droits sur le programme passwd. Que remarquez-vous ? En affichant les droits du fichier
+/etc/passwd, pouvez-vous justifier les permissions sur le programme passwd ?**
+
+```
+thomas@ubuntu-server:~$ ll /usr/bin/passwd
+-rwsr-xr-x 1 root root 63736 mars  22  2019 /usr/bin/passwd*
+```
+
+Je remarque qu'il y a un "s" dans les permissions
+
+Le "s" est le Set User ID qui permet d'executer le programme en tant que l'utilisateur qui en est le propriétaire.
+
+Vu qu'il faut être root pour executer passwd, on fait en sorte que se programme soit directement executer en tant que root sans avoir à l'ajouter au fichier sudoers et avoir à utiliser la commande sudo.
